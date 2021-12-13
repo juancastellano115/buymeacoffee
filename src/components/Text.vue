@@ -155,7 +155,7 @@ export default {
           const coffeeTxn = await coffeeMachineContract.buyCoffee(
             this.message !== "" ? this.message : "Enjoy Your Coffee",
             this.name !== "" ? this.name : "Anonymous",
-            ethers.utils.parseEther("0.01"),
+            ethers.utils.parseEther("0.001"),
             {
               gasLimit: 300000,
             }

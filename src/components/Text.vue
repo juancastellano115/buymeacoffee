@@ -105,7 +105,7 @@ export default {
       message: "",
       amount: 0.1,
       contractABI: abi.abi,
-      contractAddress: '0x744EC9d5759014335C25afaB3bE3622c22DC13c2',
+      contractAddress: '0xB2B3Cd83f3265425FD069EeAAeEbdcf278Af20cf',
       currentAccount: '',
       allCoffee: [],
     }

@@ -20,6 +20,7 @@
       <div class="one-third column">
         <label for="Name">Your Name</label>
         <input
+          v-model="name"
           class="u-full-width"
           type="email"
           placeholder="Your beautiful name goes here"
@@ -32,7 +33,20 @@
       <div class="one-third column">&nbsp;</div>
       <div class="one-third column">
         <label for="Message">Message</label>
-        <textarea class="u-full-width" placeholder="Enjoy your coffee!" id="Message"></textarea>
+        <textarea
+          v-model="message"
+          class="u-full-width"
+          placeholder="Enjoy your coffee!"
+          id="Message"
+        ></textarea>
+      </div>
+      <div class="one-third column">&nbsp;</div>
+    </div>
+    <div class="row">
+      <div class="one-third column">&nbsp;</div>
+      <div class="one-third column">
+        <label for="Name">Amount</label>
+        <input v-model="amount" class="u-full-width" type="number" id="Amount" />
       </div>
       <div class="one-third column">&nbsp;</div>
     </div>
@@ -58,9 +72,9 @@
     </div>
   </div>
   <p>
-    <a href="https://vitejs.dev/guide/features.html" target="_blank">My Github</a>
+    <a href="https://github.com/juancastellano115" target="_blank">My Github</a>
     |
-    <a href="https://v3.vuejs.org/" target="_blank">My LinkedIn</a>
+    <a href="https://linked.in/juancastellano115" target="_blank">My LinkedIn</a>
   </p>
 </template>
 
@@ -89,8 +103,9 @@ export default {
     return {
       name: "",
       message: "",
+      amount: 0.1,
       contractABI: abi.abi,
-      contractAddress: '0xE43C2D17a228251b22f1BAcf8db89B6cEE2274C9',
+      contractAddress: '0x744EC9d5759014335C25afaB3bE3622c22DC13c2',
       currentAccount: '',
       allCoffee: [],
     }
@@ -136,6 +151,11 @@ export default {
       try {
         const { ethereum } = window;
 
+        if (this.amount <= 0) {
+          toast("Amount must be greater than 0", { type: "danger" });
+          return;
+        }
+
         if (ethereum) {
           await this.detectChain(ethereum);
           const provider = new ethers.providers.Web3Provider(ethereum);
@@ -150,15 +170,12 @@ export default {
           console.log("Retrieved total coffee count...", count.toNumber());
 
           /*
-           * Execute the actual coffee from your smart contract
+           * Execute the smart contract
            */
           const coffeeTxn = await coffeeMachineContract.buyCoffee(
             this.message !== "" ? this.message : "Enjoy Your Coffee",
             this.name !== "" ? this.name : "Anonymous",
-            ethers.utils.parseEther("0.001"),
-            {
-              gasLimit: 300000,
-            }
+            { value: ethers.utils.parseEther(this.amount.toString()) },
           );
           console.log("Mining...", coffeeTxn.hash);
 
@@ -200,14 +217,10 @@ export default {
           );
 
           /*
-           * Call the getAllCoffee method from your Smart Contract
+           * Call the getAllCoffee method from Smart Contract
            */
           const coffees = await coffeeMachineContract.getAllCoffee();
 
-          /*
-           * We only need address, timestamp, name, and message in our UI so let's
-           * pick those out
-           */
           const coffeeCleaned = coffees.map((coffee) => {
             return {
               address: coffee.giver,
@@ -218,7 +231,7 @@ export default {
           });
 
           /*
-           * Store our data in React State
+           * Store the data in React state
            */
           this.allCoffee = coffeeCleaned;
         } else {
@@ -235,7 +248,7 @@ export default {
       }
     }
   },
-  mounted() {
+  async mounted() {
     let coffeeMachineContract;
     this.getAllCoffee();
     this.checkIfWalletIsConnected();

@@ -103,7 +103,7 @@ export default {
     return {
       name: "",
       message: "",
-      amount: 0.1,
+      amount: 1,
       contractABI: abi.abi,
       contractAddress: '0xB2B3Cd83f3265425FD069EeAAeEbdcf278Af20cf',
       currentAccount: '',
